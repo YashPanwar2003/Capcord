@@ -152,7 +152,7 @@ const sampleVideos: GroupVideo[] = [
 export default function GroupPage() {
   const [selectedGroup, setSelectedGroup] = useState<Group>(sampleGroups[0]);
   const [members, setMembers] = useState<GroupMember[]>(sampleMembers);
-  const [videos] = useState<GroupVideo[]>(sampleVideos);
+  const [videos, setVideos] = useState<GroupVideo[]>(sampleVideos);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
 
@@ -183,6 +183,10 @@ export default function GroupPage() {
     };
     setMembers((prev) => [...prev, newMember]);
     setIsAddMemberModalOpen(false);
+  };
+
+  const handleDeleteVideo = (videoId: string) => {
+    setVideos((prev) => prev.filter((video) => video.id !== videoId));
   };
 
   return (
@@ -222,7 +226,7 @@ export default function GroupPage() {
         {/* Main content */}
         <div className="flex-1 flex flex-col gap-6">
           <GroupHeader group={selectedGroup} memberCount={members.length} />
-          <GroupVideoGrid videos={videos} />
+          <GroupVideoGrid videos={videos} onDeleteVideo={handleDeleteVideo} />
         </div>
       </div>
 
