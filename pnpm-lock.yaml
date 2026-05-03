@@ -11,6 +11,9 @@ importers:
       '@arcjet/inspect':
         specifier: ^1.1.0
         version: 1.2.0
+      '@arcjet/ip':
+        specifier: ^1.4.0
+        version: 1.4.0
       '@arcjet/next':
         specifier: ^1.1.0
         version: 1.2.0(next@16.1.6(@babel/core@7.29.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))
@@ -116,6 +119,10 @@ packages:
 
   '@arcjet/ip@1.2.0':
     resolution: {integrity: sha512-ATqIgD41+M8V1eVFM1S5mr1wHiOv6GieAjr/ROqSZmFIDstPoPE6mz9b7vB2DqngkRltxVGnKh1yHhNuHsMt2Q==}
+    engines: {node: '>=20'}
+
+  '@arcjet/ip@1.4.0':
+    resolution: {integrity: sha512-gTmtauz5tyuhTaFT8WqS5O7RhpNnJSqK2RO3Hjr1iZydGI2YFkfNoNHjIU8Jck9A281nlHyQTTj3X+ZP51LCfg==}
     engines: {node: '>=20'}
 
   '@arcjet/logger@1.2.0':
@@ -2823,6 +2830,8 @@ snapshots:
       '@arcjet/protocol': 1.2.0
 
   '@arcjet/ip@1.2.0': {}
+
+  '@arcjet/ip@1.4.0': {}
 
   '@arcjet/logger@1.2.0':
     dependencies:

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@arcjet/inspect": "^1.1.0",
+    "@arcjet/ip": "^1.4.0",
     "@arcjet/next": "^1.1.0",
     "@neondatabase/serverless": "^1.0.2",
     "better-auth": "^1.5.1",

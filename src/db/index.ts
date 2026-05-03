@@ -1,21 +1,20 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 
-// Lazy initialization to avoid errors when DATABASE_URL is not set
-let drizzleClient: ReturnType<typeof drizzle> | null = null;
+// Only initialize database connection if DATABASE_URL is available
+const databaseUrl = process.env.DATABASE_URL;
 
-function getDb() {
-  if (!drizzleClient) {
-    const databaseUrl = process.env.DATABASE_URL;
-    if (!databaseUrl) {
+const sql = databaseUrl ? neon(databaseUrl) : null;
+const drizzleClient = sql ? drizzle(sql) : null;
+
+// Export a proxy that throws a helpful error if db is used without DATABASE_URL
+export const db = new Proxy({} as ReturnType<typeof drizzle>, {
+  get(_, prop) {
+    if (!drizzleClient) {
       throw new Error(
         "DATABASE_URL environment variable is not set. Please configure your database connection."
       );
     }
-    const sql = neon(databaseUrl);
-    drizzleClient = drizzle(sql);
-  }
-  return drizzleClient;
-}
-
-export { getDb as db };
+    return (drizzleClient as Record<string | symbol, unknown>)[prop];
+  },
+});
