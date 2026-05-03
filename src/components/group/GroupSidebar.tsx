@@ -6,7 +6,7 @@ import type { Group, GroupMember, MemberRole } from "@/app/(root)/group/page";
 
 interface GroupSidebarProps {
   groups: Group[];
-  selectedGroup: Group;
+  selectedGroup: Group | null;
   members: GroupMember[];
   onGroupChange: (group: Group) => void;
   onRoleChange: (memberId: string, newRole: MemberRole) => void;
@@ -39,7 +39,9 @@ export default function GroupSidebar({
     <div className="flex flex-col gap-6 border border-gray-20 rounded-20 p-4 lg:p-5 bg-white shadow-10">
       {/* Group Switcher */}
       <div className="flex flex-col gap-3">
-        <h3 className="text-sm font-medium text-gray-100">Current Group</h3>
+        <h3 className="text-sm font-medium text-gray-100">
+          {selectedGroup ? "Current Group" : "Select a Group"}
+        </h3>
         <div className="relative">
           <button
             onClick={() => setIsGroupDropdownOpen(!isGroupDropdownOpen)}
@@ -47,16 +49,28 @@ export default function GroupSidebar({
           >
             <div className="flex items-center gap-3">
               <div className="size-10 rounded-full bg-pink-10 flex items-center justify-center">
-                <span className="text-pink-100 font-bold text-sm">
-                  {selectedGroup.name.charAt(0).toUpperCase()}
-                </span>
+                {selectedGroup ? (
+                  <span className="text-pink-100 font-bold text-sm">
+                    {selectedGroup.name.charAt(0).toUpperCase()}
+                  </span>
+                ) : (
+                  <Image
+                    src="/assets/icons/members.svg"
+                    alt="Groups"
+                    width={20}
+                    height={20}
+                    className="opacity-60"
+                  />
+                )}
               </div>
               <div className="text-left">
                 <p className="text-sm font-semibold text-dark-100 truncate max-w-[140px]">
-                  {selectedGroup.name}
+                  {selectedGroup ? selectedGroup.name : "Choose a group"}
                 </p>
                 <p className="text-xs text-gray-100">
-                  {selectedGroup.memberCount} members
+                  {selectedGroup
+                    ? `${selectedGroup.memberCount} members`
+                    : `${groups.length} groups available`}
                 </p>
               </div>
             </div>
@@ -82,7 +96,7 @@ export default function GroupSidebar({
                     setIsGroupDropdownOpen(false);
                   }}
                   className={`list-item flex items-center gap-3 ${
-                    selectedGroup.id === group.id ? "bg-pink-10" : ""
+                    selectedGroup?.id === group.id ? "bg-pink-10" : ""
                   }`}
                 >
                   <div className="size-8 rounded-full bg-pink-10 flex items-center justify-center flex-shrink-0">
@@ -96,7 +110,7 @@ export default function GroupSidebar({
                       {group.memberCount} members
                     </p>
                   </div>
-                  {selectedGroup.id === group.id && (
+                  {selectedGroup?.id === group.id && (
                     <Image
                       src="/assets/icons/check.svg"
                       alt="Selected"
@@ -111,108 +125,134 @@ export default function GroupSidebar({
         </div>
       </div>
 
-      {/* Divider */}
-      <div className="h-px bg-gray-20" />
+      {/* Show member section only when a group is selected */}
+      {selectedGroup ? (
+        <>
+          {/* Divider */}
+          <div className="h-px bg-gray-20" />
 
-      {/* Member List Header */}
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-gray-100">
-          Members ({members.length})
-        </h3>
-        <button
-          onClick={onAddMember}
-          className="flex items-center gap-1.5 py-1.5 px-3 bg-pink-100 text-white rounded-4xl text-xs font-semibold hover:bg-pink-100/90 transition-colors"
-        >
-          <svg
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-          Add
-        </button>
-      </div>
-
-      {/* Member List */}
-      <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto">
-        {members.map((member) => (
-          <div
-            key={member.id}
-            className="flex items-center gap-3 p-3 rounded-18 border border-gray-20 hover:border-pink-100/30 transition-colors group"
-          >
-            <Image
-              src={member.image}
-              alt={member.name}
-              width={36}
-              height={36}
-              className="rounded-full aspect-square object-cover"
-            />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-dark-100 truncate">
-                {member.name}
-              </p>
-              <p className="text-xs text-gray-100 truncate">{member.email}</p>
-            </div>
-
-            {/* Role Badge / Dropdown */}
-            <div className="relative">
-              {member.role === "owner" ? (
-                <span
-                  className={`px-2.5 py-1 rounded-4xl text-xs font-medium ${roleColors[member.role]}`}
-                >
-                  Owner
-                </span>
-              ) : editingMemberId === member.id ? (
-                <div className="flex items-center gap-2">
-                  <select
-                    value={member.role}
-                    onChange={(e) => {
-                      onRoleChange(member.id, e.target.value as MemberRole);
-                      setEditingMemberId(null);
-                    }}
-                    className="text-xs py-1 px-2 border border-gray-20 rounded-lg focus:outline-pink-100"
-                  >
-                    {roleOptions.map((role) => (
-                      <option key={role} value={role}>
-                        {role.charAt(0).toUpperCase() + role.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => onRemoveMember(member.id)}
-                    className="p-1 text-orange-100 hover:bg-orange-100/10 rounded"
-                    title="Remove member"
-                  >
-                    <svg
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                    </svg>
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setEditingMemberId(member.id)}
-                  className={`px-2.5 py-1 rounded-4xl text-xs font-medium ${roleColors[member.role]} hover:opacity-80 transition-opacity`}
-                >
-                  {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
-                </button>
-              )}
-            </div>
+          {/* Member List Header */}
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-medium text-gray-100">
+              Members ({members.length})
+            </h3>
+            <button
+              onClick={onAddMember}
+              className="flex items-center gap-1.5 py-1.5 px-3 bg-pink-100 text-white rounded-4xl text-xs font-semibold hover:bg-pink-100/90 transition-colors"
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 5v14M5 12h14" />
+              </svg>
+              Add
+            </button>
           </div>
-        ))}
-      </div>
+
+          {/* Member List */}
+          <div className="flex flex-col gap-3 max-h-[400px] overflow-y-auto">
+            {members.map((member) => (
+              <div
+                key={member.id}
+                className="flex items-center gap-3 p-3 rounded-18 border border-gray-20 hover:border-pink-100/30 transition-colors group"
+              >
+                <Image
+                  src={member.image}
+                  alt={member.name}
+                  width={36}
+                  height={36}
+                  className="rounded-full aspect-square object-cover"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-dark-100 truncate">
+                    {member.name}
+                  </p>
+                  <p className="text-xs text-gray-100 truncate">{member.email}</p>
+                </div>
+
+                {/* Role Badge / Dropdown */}
+                <div className="relative">
+                  {member.role === "owner" ? (
+                    <span
+                      className={`px-2.5 py-1 rounded-4xl text-xs font-medium ${roleColors[member.role]}`}
+                    >
+                      Owner
+                    </span>
+                  ) : editingMemberId === member.id ? (
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={member.role}
+                        onChange={(e) => {
+                          onRoleChange(member.id, e.target.value as MemberRole);
+                          setEditingMemberId(null);
+                        }}
+                        className="text-xs py-1 px-2 border border-gray-20 rounded-lg focus:outline-pink-100"
+                      >
+                        {roleOptions.map((role) => (
+                          <option key={role} value={role}>
+                            {role.charAt(0).toUpperCase() + role.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        onClick={() => onRemoveMember(member.id)}
+                        className="p-1 text-orange-100 hover:bg-orange-100/10 rounded"
+                        title="Remove member"
+                      >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                        </svg>
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setEditingMemberId(member.id)}
+                      className={`px-2.5 py-1 rounded-4xl text-xs font-medium ${roleColors[member.role]} hover:opacity-80 transition-opacity`}
+                    >
+                      {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Divider */}
+          <div className="h-px bg-gray-20" />
+
+          {/* Empty state when no group selected */}
+          <div className="flex flex-col items-center text-center py-8 px-4">
+            <div className="p-3 bg-pink-10 rounded-full mb-4">
+              <Image
+                src="/assets/icons/members.svg"
+                alt="Select group"
+                width={32}
+                height={32}
+                className="opacity-70"
+              />
+            </div>
+            <p className="text-sm text-gray-100 leading-relaxed">
+              Select a group above to view its members and shared videos
+            </p>
+          </div>
+        </>
+      )}
     </div>
   );
 }

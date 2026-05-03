@@ -150,7 +150,7 @@ const sampleVideos: GroupVideo[] = [
 ];
 
 export default function GroupPage() {
-  const [selectedGroup, setSelectedGroup] = useState<Group>(sampleGroups[0]);
+  const [selectedGroup, setSelectedGroup] = useState<Group | null>(null);
   const [members, setMembers] = useState<GroupMember[]>(sampleMembers);
   const [videos, setVideos] = useState<GroupVideo[]>(sampleVideos);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -158,6 +158,7 @@ export default function GroupPage() {
 
   const handleGroupChange = (group: Group) => {
     setSelectedGroup(group);
+    setIsSidebarOpen(false);
   };
 
   const handleRoleChange = (memberId: string, newRole: MemberRole) => {
@@ -225,8 +226,56 @@ export default function GroupPage() {
 
         {/* Main content */}
         <div className="flex-1 flex flex-col gap-6">
-          <GroupHeader group={selectedGroup} memberCount={members.length} />
-          <GroupVideoGrid videos={videos} onDeleteVideo={handleDeleteVideo} />
+          {selectedGroup ? (
+            <>
+              <GroupHeader group={selectedGroup} memberCount={members.length} />
+              <GroupVideoGrid videos={videos} onDeleteVideo={handleDeleteVideo} />
+            </>
+          ) : (
+            <div className="flex-1 flex items-center justify-center min-h-[400px]">
+              <div className="flex flex-col items-center text-center max-w-md">
+                <div className="p-4 bg-pink-100/10 rounded-full mb-6">
+                  <Image
+                    src="/assets/icons/members.svg"
+                    alt="Groups"
+                    width={56}
+                    height={56}
+                    className="opacity-80"
+                  />
+                </div>
+                <h2 className="text-2xl font-bold text-dark-100 mb-3">
+                  Welcome to Groups
+                </h2>
+                <p className="text-gray-100 mb-6 leading-relaxed">
+                  Select a group from the sidebar to view shared videos and collaborate with your team members.
+                </p>
+                <button
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="lg:hidden flex items-center gap-2 py-3 px-6 bg-pink-100 rounded-full text-dark-100 font-semibold hover:bg-pink-200 transition-colors"
+                >
+                  <Image
+                    src="/assets/icons/hamburger.svg"
+                    alt="Menu"
+                    width={16}
+                    height={16}
+                  />
+                  Browse Groups
+                </button>
+                <div className="hidden lg:flex flex-col items-center gap-3 mt-2">
+                  <div className="flex items-center gap-2 text-sm text-gray-100">
+                    <Image
+                      src="/assets/icons/arrow-left.svg"
+                      alt="Arrow"
+                      width={16}
+                      height={16}
+                      className="rotate-180"
+                    />
+                    <span>Select a group from the sidebar</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
