@@ -200,8 +200,8 @@ export default function Home() {
             />
             <StepCard
               number="02"
-              title="Edit (Optional)"
-              description="Trim, add captions, or enhance your video with our built-in editing tools."
+              title="Upload"
+              description="Your recording is automatically uploaded to the cloud. Fast, secure, and always accessible."
             />
             <StepCard
               number="03"
