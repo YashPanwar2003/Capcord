@@ -141,18 +141,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 border-y border-gray-20 bg-light-100">
-        <div className="wrapper">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <StatCard value="10K+" label="Active Users" />
-            <StatCard value="50K+" label="Videos Created" />
-            <StatCard value="98%" label="User Satisfaction" />
-            <StatCard value="2s" label="Average Share Time" />
-          </div>
-        </div>
-      </section>
-
       {/* Features Section */}
       <section id="features" className="py-24">
         <div className="wrapper">
@@ -166,7 +154,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <FeatureCard
               icon="/assets/icons/record.svg"
               title="One-Click Recording"
@@ -186,16 +174,6 @@ export default function Home() {
               icon="/assets/icons/message.svg"
               title="Team Groups"
               description="Create groups to share videos with your team. Perfect for async collaboration."
-            />
-            <FeatureCard
-              icon="/assets/icons/eye.svg"
-              title="View Analytics"
-              description="Track who watched your videos and for how long. Understand engagement at a glance."
-            />
-            <FeatureCard
-              icon="/assets/icons/download.svg"
-              title="Easy Download"
-              description="Download your recordings in high quality. Keep a local copy whenever you need."
             />
           </div>
         </div>
@@ -346,17 +324,6 @@ export default function Home() {
         </div>
       </footer>
     </main>
-  );
-}
-
-function StatCard({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="text-center">
-      <p className="text-3xl sm:text-4xl font-bold text-dark-100 mb-1">
-        {value}
-      </p>
-      <p className="text-sm text-gray-100">{label}</p>
-    </div>
   );
 }
 
